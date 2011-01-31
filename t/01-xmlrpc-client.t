@@ -1,0 +1,34 @@
+# vim: filetype=perl :
+
+use strict;
+use warnings;
+
+use FindBin;
+use lib $FindBin::Bin . '/lib'; # use the test lib dir..
+use Test::MockOpenERP;
+use Test::More;# tests => 1; # last test to print
+
+BEGIN {
+   use_ok('OpenERP::XMLRPC::Simple');
+}
+
+# CONNECT
+
+#ok ( my $erp = OpenERP::XMLRPC::Simple->new( dbname => 'openerp5_test', username => 'admin', password => 'admin', host => '10.42.43.43' ), 'instanciated' );
+
+# start mock server..
+Test::MockOpenERP->start;
+
+# connect to mock server..
+ok ( my $erp = OpenERP::XMLRPC::Client->new( port => 5555 ), 'instanciated' );
+
+# check the roles..
+ok ( $erp->can('object_execute'), 'has the method "object_execute"' );
+ok ( $erp->can('object_exec_workflow'), 'has the method "object_exec_workflow"' );
+ok ( $erp->can('report_report'), 'has the method "report_report"' );
+ok ( $erp->can('report_report_get'), 'has the method "report_report_get"' );
+
+# stop mock server..
+Test::MockOpenERP->stop;
+
+done_testing;
