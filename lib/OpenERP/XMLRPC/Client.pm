@@ -316,6 +316,31 @@ provided when you install OpenERP.
 
 When the object is instanciated, this method is run. This calls openerp_login.
 
+=head2 openerp_login
+
+Logs the client in.  Called automatically when the object is created.
+
+=head2 openerp_logout
+
+Basically a no-op.
+
+=head2 object_execute
+
+Low level method for making a call to the Open ERP server.  Normally called by a 
+wrapper function like L<create> or L<read>.
+
+=head2 object_exec_workflow
+
+Makes an 'exec_workflow' call to Open ERP.
+
+=head2 report_report
+
+Sends a 'report' call to Open ERP.
+
+=head2 report_report_get
+
+Sends a 'report_get' call to Open ERP.
+
 =head2 change_uri
 
 OpenERP makes methods available via different URI's, this method is used to change which
