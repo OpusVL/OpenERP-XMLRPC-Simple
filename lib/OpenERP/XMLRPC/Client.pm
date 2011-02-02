@@ -265,10 +265,8 @@ version 0.001
 
 =head1 SYNOPSIS
 
-	my $rpc = OpenERP::XMLRPC::Client->new( dbname => 'terp', username => 'admin', password => 'admin', host => '127.0.0.1', port => '8069' )	
-	my $partner_ids = $rpc->object_execute( 'res.partner', 'search', [ 'name', 'ilke', 'abc' ] );
-
-	my $erp = OpenERP::XMLRPC::Simple->new( dbname => 'my_openerp_db', username => 'mylogin', password => 'mypassword', host => '10.0.0.123' );
+	my $erp = OpenERP::XMLRPC::Client->new( dbname => 'terp', username => 'admin', password => 'admin', host => '127.0.0.1', port => '8069' )	
+	my $partner_ids = $erp->object_execute( 'res.partner', 'search', [ 'name', 'ilke', 'abc' ] );
 
 	# READ a res.partner object
 	my $partner = $erp->read( 'res.partner', $id );
