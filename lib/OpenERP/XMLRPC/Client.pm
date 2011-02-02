@@ -12,6 +12,15 @@ has 'host' 		=> ( is  => 'ro', isa => 'Str', default => '127.0.0.1');
 has 'port' 		=> ( is  => 'ro', isa => 'Int', default => 8069);
 has 'proto'		=> ( is  => 'ro', isa => 'Str', default => 'http');
 
+has '_report_report_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/report' );
+has '_report_report_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/report' );
+has '_object_execute_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/object' );
+has '_object_exec_workflow_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/object' );
+
+has 'openerp_uid' 	=> ( is  => 'rw', isa => 'Int' );
+has 'base_rpc_uri'	=> ( is  => 'rw', isa => 'Str', default => 'xmlrpc/common');
+
+
 with 'MooseX::Role::XMLRPC::Client' => 
 { 
 	name => 'openerp',
@@ -49,10 +58,6 @@ sub openerp_logout
 }
 
 
-has 'openerp_uid' 	=> ( is  => 'rw', isa => 'Int' );
-has 'base_rpc_uri'	=> ( is  => 'rw', isa => 'Str', default => 'xmlrpc/common');
-
-
 
 sub BUILD
 {
@@ -75,26 +80,98 @@ sub change_uri
 	return $exsting_base_uri; # return the old uri.
 }
 
+sub object_execute
+{
+	my $self = shift;
 
-with 'OpenERP::XMLRPC::Client::Role::ObjectExecute';
+	my $method 		= shift;	# eg. 'search'
+	my $relation 	= shift;	# eg. 'res.partner'
+	my @args 		= @_;		# All other args we just pass on.
 
+	# change the uri to base uri we are going to query..
+    $self->change_uri( $self->_object_execute_uri );
 
+    $self->openerp_rpc->simple_request
+	(
+		'execute',
+		$self->dbname,
+		$self->openerp_uid,
+		$self->password,
+		$relation,
+		$method,
+		@args
+	);
 
+}
 
+sub object_exec_workflow
+{
+	my $self = shift;
 
-with 'OpenERP::XMLRPC::Client::Role::ObjectExecWorkflow';
+	my $method 		= shift;	# eg. 'search'
+	my $relation 	= shift;	# eg. 'res.partner'
+	my @args 		= @_;		# All other args we just pass on.
 
+	# change the uri to base uri we are going to query..
+    $self->change_uri( $self->_object_exec_workflow_uri );
 
+    $self->openerp_rpc->simple_request
+	(
+		'exec_workflow',
+		$self->dbname,
+		$self->openerp_uid,
+		$self->password,
+		$relation,
+		$method,
+		@args
+	);
 
+}
 
+sub report_report
+{
+	my $self = shift;
 
-with 'OpenERP::XMLRPC::Client::Role::ReportReport';
+	my $method 		= shift;	# eg. 'search'
+	my $relation 	= shift;	# eg. 'res.partner'
+	my @args 		= @_;		# All other args we just pass on.
 
+	# change the uri to base uri we are going to query..
+    $self->change_uri( $self->_object_execute_uri );
 
+    $self->openerp_rpc->simple_request
+	(
+		'report',
+		$self->dbname,
+		$self->openerp_uid,
+		$self->password,
+		$relation,
+		$method,
+		@args
+	);
 
+}
 
+sub report_report_get
+{
+	my $self = shift;
 
-with 'OpenERP::XMLRPC::Client::Role::ReportReportGet';
+	my $report_id	= shift;	# eg. 123
+
+	# change the uri to base uri we are going to query..
+    $self->change_uri( $self->_object_execute_uri );
+
+    $self->openerp_rpc->simple_request
+	(
+		'report_get',
+		$self->dbname,
+		$self->openerp_uid,
+		$self->password,
+		$report_id
+	);
+
+}
+
 
 
 1;
