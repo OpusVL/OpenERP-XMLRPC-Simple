@@ -174,37 +174,42 @@ sub report_report_get
 
 sub create
 {
-	my $self 	= shift;
-	my $object 	= shift;
-	my $args 	= shift;
-
-	return $self->object_execute('create', $object, $args );
+    return shift->_three_arg_execute('create', @_);
 }
 
 sub read
 {
-	my $self 	= shift;
-	my $object 	= shift;
-	my $ids		= shift;
-	my $cols 	= shift;
-
-	# ensure we pass an array of IDs to the RPC..
-	$ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
-
-	return $self->object_execute('read', $object, $ids, $cols );
+    return shift->_array_execute('read', @_);
 }
 
 sub search
 {
-	my $self 	= shift;
-	my $object 	= shift;
-	my $args 	= shift;
-	return $self->object_execute('search', $object, $args );
+    return shift->_three_arg_execute('search', @_);
 }
 
 sub update
 {
+    return shift->_array_execute('write', @_);
+}
+
+sub delete
+{
+    return shift->_array_execute('unlink', @_);
+}
+
+sub _three_arg_execute
+{
 	my $self 	= shift;
+    my $verb    = shift;
+	my $object 	= shift;
+	my $args 	= shift;
+	return $self->object_execute($verb, $object, $args );
+}
+
+sub _array_execute
+{
+	my $self 	= shift;
+    my $verb    = shift;
 	my $object 	= shift;
 	my $ids 	= shift;
 	my $args 	= shift;
@@ -212,19 +217,7 @@ sub update
     # ensure we pass an array of IDs to the RPC..
     $ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
 
-	return $self->object_execute('write', $object, $ids, $args );
-}
-
-sub delete
-{
-	my $self 	= shift;
-	my $object 	= shift;
-	my $ids 	= shift;
-
-    # ensure we pass an array of IDs to the RPC..
-    $ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
-
-	return $self->object_execute('unlink', $object, $ids );
+	return $self->object_execute($verb, $object, $ids, $args );
 }
 
 sub search_detail
