@@ -187,9 +187,19 @@ sub search
     return shift->_three_arg_execute('search', @_);
 }
 
+sub field_info
+{
+    return shift->_three_arg_execute('fields_view_get', @_);
+}
+
 sub update
 {
     return shift->_array_execute('write', @_);
+}
+
+sub get_defaults
+{
+    return shift->_array_execute('default_get', @_);
 }
 
 sub delete
@@ -389,6 +399,14 @@ Returns: boolean	 - deleted or not.
 
 Example:
 	$success = $erp->delete('res.partner', 1 );
+
+=head2 field_info ( OBJECTNAME )
+
+Returns: hash containing all field info, this contains field names and field types.
+
+=head2 get_defaults ( OBJECTNAME, [ FIELDS ] )
+
+Returns: hash containing the default values for those fields.
 
 =head2 search_detail ( OBJECTNAME, [ [ COLNAME, COMPARATOR, VALUE ] ] )
 
