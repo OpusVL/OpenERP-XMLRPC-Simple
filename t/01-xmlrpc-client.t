@@ -9,18 +9,18 @@ use Test::MockOpenERP;
 use Test::More;# tests => 1; # last test to print
 
 BEGIN {
-   use_ok('OpenERP::XMLRPC::Simple');
+   use_ok('OpenERP::XMLRPC::Client');
 }
 
 # CONNECT
 
-#ok ( my $erp = OpenERP::XMLRPC::Simple->new( dbname => 'openerp5_test', username => 'admin', password => 'admin', host => '10.42.43.43' ), 'instanciated' );
+#ok ( my $erp = OpenERP::XMLRPC::Client->new( dbname => 'openerp5_test', username => 'admin', password => 'admin', host => '10.42.43.43' ), 'instanciated' );
 
 # start mock server..
 Test::MockOpenERP->start;
 
 # connect to mock server..
-ok ( my $erp = OpenERP::XMLRPC::Client->new( port => 5555 ), 'instanciated' );
+ok ( my $erp = OpenERP::XMLRPC::Client->new( port => 5555 ), 'created' );
 
 # check the roles..
 ok ( $erp->can('object_execute'), 'has the method "object_execute"' );

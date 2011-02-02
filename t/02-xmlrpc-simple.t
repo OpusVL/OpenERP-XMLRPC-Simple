@@ -10,7 +10,7 @@ use lib $FindBin::Bin . '/lib'; # use the test lib dir..
 use Test::MockOpenERP;
 
 BEGIN {
-   use_ok('OpenERP::XMLRPC::Simple');
+   use_ok('OpenERP::XMLRPC::Client');
 }
 
 # CONNECT
@@ -47,7 +47,7 @@ if ( ( exists $ENV{OPENERP_SIMPLE_HOST} ) )
 	my $password 	= $ENV{OPENERP_SIMPLE_PASS} || 'admin' ;
 	my $port 		= $ENV{OPENERP_SIMPLE_PORT} || '8069';
 
-	ok ( $erp = OpenERP::XMLRPC::Simple->new( dbname => $dbname, username => $username, password => $password, host => $host, port => $port ), 'instanciated' );
+	ok ( $erp = OpenERP::XMLRPC::Client->new( dbname => $dbname, username => $username, password => $password, host => $host, port => $port ), 'instanciated' );
 
 	$using_mock_server = 0;
 }
@@ -59,7 +59,7 @@ else
 	Test::MockOpenERP->start;
 
 	# connect to mock server..
-	ok ( $erp = OpenERP::XMLRPC::Simple->new( port => 5555 ), 'instanciated' );
+	ok ( $erp = OpenERP::XMLRPC::Client->new( port => 5555 ), 'instanciated' );
 }
 
 

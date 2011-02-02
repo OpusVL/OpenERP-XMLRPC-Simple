@@ -172,6 +172,82 @@ sub report_report_get
 
 }
 
+sub create
+{
+	my $self 	= shift;
+	my $object 	= shift;
+	my $args 	= shift;
+
+	return $self->object_execute('create', $object, $args );
+}
+
+sub read
+{
+	my $self 	= shift;
+	my $object 	= shift;
+	my $ids		= shift;
+	my $cols 	= shift;
+
+	# ensure we pass an array of IDs to the RPC..
+	$ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
+
+	return $self->object_execute('read', $object, $ids, $cols );
+}
+
+sub search
+{
+	my $self 	= shift;
+	my $object 	= shift;
+	my $args 	= shift;
+	return $self->object_execute('search', $object, $args );
+}
+
+sub update
+{
+	my $self 	= shift;
+	my $object 	= shift;
+	my $ids 	= shift;
+	my $args 	= shift;
+
+    # ensure we pass an array of IDs to the RPC..
+    $ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
+
+	return $self->object_execute('write', $object, $ids, $args );
+}
+
+sub delete
+{
+	my $self 	= shift;
+	my $object 	= shift;
+	my $ids 	= shift;
+
+    # ensure we pass an array of IDs to the RPC..
+    $ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
+
+	return $self->object_execute('unlink', $object, $ids );
+}
+
+sub search_detail
+{
+	my $self = shift;
+	my $object 	= shift;
+	my $args 	= shift;
+
+	# search and get ids..
+	my $ids = $self->search( $object, $args );
+	return unless ( defined $ids && ref $ids eq 'ARRAY' && scalar @$ids >= 1 );
+
+	# read data from all the ids..
+	return $self->read( $object, $ids );
+}
+
+sub read_single
+{
+	my $res = shift->read( @_ );
+	return unless ( defined $res && ref $res eq 'ARRAY' && scalar @$res >= 1 );
+	return $res->[0];
+}
+
 
 
 1;
@@ -191,6 +267,13 @@ version 0.001
 
 	my $rpc = OpenERP::XMLRPC::Client->new( dbname => 'terp', username => 'admin', password => 'admin', host => '127.0.0.1', port => '8069' )	
 	my $partner_ids = $rpc->object_execute( 'res.partner', 'search', [ 'name', 'ilke', 'abc' ] );
+
+	my $erp = OpenERP::XMLRPC::Simple->new( dbname => 'my_openerp_db', username => 'mylogin', password => 'mypassword', host => '10.0.0.123' );
+
+	# READ a res.partner object
+	my $partner = $erp->read( 'res.partner', $id );
+
+	print "You Found Partner:" . $partner->{name} . "\n";
 
 =head1 DESCRIPTION
 
@@ -224,6 +307,11 @@ OpenERP::XMLRPC::Client - XML RPC Client for OpenERP
 
 =head1 METHODS
 
+These methods re-present the OpenERP XML RPC but in a slightly more user friendly way.
+
+The methods have been tested using the 'res.partner' object name and the demo database
+provided when you install OpenERP. 
+
 =head2 BUILD
 
 When the object is instanciated, this method is run. This calls openerp_login.
@@ -240,35 +328,76 @@ Arguments:
 Returns:
 	string	- the old uri - the one this new one replaced.
 
-=head1 ROLES
+=head2 read ( OBJECTNAME, [IDS] )
 
-=head2 MooseX::Role::XMLRPC::Client
+Can pass this a sinlge ID or an ARRAYREF of ID's, it will return an ARRAYREF of 
+OBJECT records (HASHREF's).
 
-Used to establish and communicate via an xml rpc connection to OpenERP.
+Example:
+	$partner = $erp->read('res.partner', 1 );
+	print "This is the returned record name:" .  $partner->[0]->{name} . "\n";
 
-=head2 OpenERP::XMLRPC::Client::Role::ObjectExecute
+	$partners = $erp->read('res.partner', [1,2] );
+	print "This is the returned record 1:" .  $partners->[0]->{name} . "\n";
+	print "This is the returned record 2:" .  $partners->[1]->{name} . "\n";
 
-Used to call 'execute' method in OpenERP RPC against the 'xmlrcp/object' uri.
+Returns: ArrayRef of HashRef's - All the objects with IDs passed.
 
-Provides: ->object_execute
+=head2 search ( OBJECTNAME, [ [ COLNAME, COMPARATOR, VALUE ] ] )
 
-=head2 OpenERP::XMLRPC::Client::Role::ObjectExecWorkflow
+Used to search and return IDs of objects matching the searcgh.
 
-Used to call 'exec_workflow' method in OpenERP RPC against the 'xmlrcp/object' uri.
+Returns: ArrayRef of ID's - All the objects ID's matching the search.
 
-Provides: ->object_exec_workflow
+Example:
+	$results = $erp->search('res.partner', [ [ 'name', 'ilke', 'abc' ] ] );
+	print "This is the 1st ID found:" .  $results->[0] . "\n";
 
-=head2 OpenERP::XMLRPC::Client::Role::ReportReport
+=head2 create ( OBJECTNAME, { COLNAME => COLVALUE } )
 
-Used to call 'report' method in OpenERP RPC against the 'xmlrcp/report' uri.
+Returns: ID	- the ID of the object created.
 
-Provides: ->report_report
+Example:
+	$new_id = $erp->create('res.partner', { 'name' => 'new company name' } );
 
-=head2 OpenERP::XMLRPC::Client::Role::ReportReportGet
+=head2 update ( OBJECTNAME, ID, { COLNAME => COLVALUE } )
 
-Used to call 'report_get' method in OpenERP RPC against the 'xmlrcp/report' uri.
+Returns: boolean	 - updated or not.
 
-Provides: ->report_report_get
+Example:
+	$success = $erp->update('res.partner', 1, { 'name' => 'changed company name' } );
+
+=head2 delete ( OBJECTNAME, ID )
+
+Returns: boolean	 - deleted or not.
+
+Example:
+	$success = $erp->delete('res.partner', 1 );
+
+=head2 search_detail ( OBJECTNAME, [ [ COLNAME, COMPARATOR, VALUE ] ] )
+
+Used to search and read details on a perticular OBJECT. This uses 'search' to find IDs,
+then calls 'read' to get details on each ID returned.
+
+Returns: ArrayRef of HashRef's - All the objects found with all their details.
+
+Example:
+	$results = $erp->search_detail('res.partner', [ [ 'name', 'ilke', 'abc' ] ] );
+	print "This is the 1st found record name:" .  $results->[0]->{name} . "\n";
+
+=head2 read_single ( OBJECTNAME, ID )
+
+Pass this a sinlge ID and get a single OBJECT record (HASHREF).
+
+Example:
+	$partner = $erp->read_single('res.partner', 1 );
+	print "This name of partner with ID 1:" .  $partner->{name} . "\n";
+
+Returns: HashRef 	- The objects data
+
+=head1 SEE ALSO
+
+L<RPC::XML::Client>
 
 =head1 AUTHOR
 
