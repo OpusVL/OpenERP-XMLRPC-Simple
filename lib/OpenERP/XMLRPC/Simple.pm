@@ -13,68 +13,81 @@ has 'host'      => ( is  => 'ro', isa => 'Str', default => '127.0.0.1');
 has 'port'      => ( is  => 'ro', isa => 'Int', default => 8069);
 has 'proto'     => ( is  => 'ro', isa => 'Str', default => 'http');
 
-has 'rpc' 		=> ( is  => 'ro', isa => 'OpenERP::XMLRPC::Client', lazy_build => 1);
-sub _build_rpc
+sub create
 {
-	my $self = shift;
+	my $self 	= shift;
+	my $object 	= shift;
+	my $args 	= shift;
 
-	return OpenERP::XMLRPC::Client->new
-	( 
-		dbname		=> $self->dbname,
-		username	=> $self->username,
-		password	=> $self->password,
-		dbname		=> $self->dbname,
-		host		=> $self->host,
-		port		=> $self->port
-	);
+	return $self->object_execute('create', $object, $args );
 }
 
+sub read
+{
+	my $self 	= shift;
+	my $object 	= shift;
+	my $ids		= shift;
+	my $cols 	= shift;
 
-with 'OpenERP::XMLRPC::Simple::Role::Read';
+	# ensure we pass an array of IDs to the RPC..
+	$ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
 
+	return $self->object_execute('read', $object, $ids, $cols );
+}
 
+sub search
+{
+	my $self 	= shift;
+	my $object 	= shift;
+	my $args 	= shift;
+	return $self->object_execute('search', $object, $args );
+}
 
+sub update
+{
+	my $self 	= shift;
+	my $object 	= shift;
+	my $ids 	= shift;
+	my $args 	= shift;
 
+    # ensure we pass an array of IDs to the RPC..
+    $ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
 
+	return $self->object_execute('write', $object, $ids, $args );
+}
 
-with 'OpenERP::XMLRPC::Simple::Role::Search';
+sub delete
+{
+	my $self 	= shift;
+	my $object 	= shift;
+	my $ids 	= shift;
 
+    # ensure we pass an array of IDs to the RPC..
+    $ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
 
+	return $self->object_execute('unlink', $object, $ids );
+}
 
+sub search_detail
+{
+	my $self = shift;
+	my $object 	= shift;
+	my $args 	= shift;
 
+	# search and get ids..
+	my $ids = $self->search( $object, $args );
+	return unless ( defined $ids && ref $ids eq 'ARRAY' && scalar @$ids >= 1 );
 
+	# read data from all the ids..
+	return $self->read( $object, $ids );
+}
 
-with 'OpenERP::XMLRPC::Simple::Role::Create';
-
-
-
-
-
-
-with 'OpenERP::XMLRPC::Simple::Role::Update';
-
-
-
-
-
-
-with 'OpenERP::XMLRPC::Simple::Role::Delete';
-
-
-
-
-
-
-with 'OpenERP::XMLRPC::Simple::Role::SearchDetail';
-
-
-
-
-
-
-with 'OpenERP::XMLRPC::Simple::Role::ReadSingle';
-
-
+sub read_single
+{
+	my $res = shift->read( @_ );
+	return unless ( defined $res && ref $res eq 'ARRAY' && scalar @$res >= 1 );
+	return $res->[0];
+}
 
 
 
