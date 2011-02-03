@@ -192,6 +192,11 @@ sub field_info
     return shift->_three_arg_execute('fields_view_get', @_);
 }
 
+sub model_fields
+{
+    return shift->_three_arg_execute('fields_get', @_);
+}
+
 sub update
 {
     return shift->_array_execute('write', @_);
@@ -403,6 +408,10 @@ Example:
 =head2 field_info ( OBJECTNAME )
 
 Returns: hash containing all field info, this contains field names and field types.
+
+=head2 model_fields ( OBJECTNAME )
+
+Returns: hash containing all the models fields.
 
 =head2 get_defaults ( OBJECTNAME, [ FIELDS ] )
 
