@@ -27,7 +27,7 @@ my %WriteMakefileArgs = (
     'Net::HTTPServer' => '1.1.1',
     'XML::Simple' => '2.18'
   },
-  'VERSION' => '0.001',
+  'VERSION_FROM' => 'lib/OpenERP/XMLRPC/Client.pm',
   'test' => {
     'TESTS' => 't/*.t'
   }

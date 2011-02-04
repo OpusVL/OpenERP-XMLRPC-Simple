@@ -1,6 +1,7 @@
 package OpenERP::XMLRPC::Client;
 # ABSTRACT: XMLRPC Client tweaked for OpenERP interaction.
 
+our $VERSION = '0.02';
 
 use Moose;
 
@@ -266,10 +267,6 @@ __END__
 =head1 NAME
 
 OpenERP::XMLRPC::Client - XMLRPC Client tweaked for OpenERP interaction.
-
-=head1 VERSION
-
-version 0.001
 
 =head1 SYNOPSIS
 
