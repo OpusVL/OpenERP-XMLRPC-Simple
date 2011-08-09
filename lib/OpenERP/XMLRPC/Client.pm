@@ -180,12 +180,26 @@ sub create
 
 sub read
 {
-    return shift->_array_execute('read', @_);
+    my ($self, $object, $ids, $context) = @_;
+    
+    $ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
+    
+    if ($context) {
+	return $self->object_execute('read', $object, $ids, undef, $context);
+    } else {
+	return $self->object_execute('read', $object, $ids);
+    }
 }
 
 sub search
 {
-    return shift->_three_arg_execute('search', @_);
+    my ($self, $object, $args, $context) = @_;
+    
+    if ($context) {
+	return $self->object_execute('search', $object, $args, 0, undef, undef, $context);
+    } else {
+	return $self->object_execute('search', $object, $args);
+    }
 }
 
 sub field_info
@@ -238,16 +252,14 @@ sub _array_execute
 
 sub search_detail
 {
-	my $self = shift;
-	my $object 	= shift;
-	my $args 	= shift;
+	my ($self, $object, $args, $context) = @_;
 
 	# search and get ids..
-	my $ids = $self->search( $object, $args );
+	my $ids = $self->search( $object, $args, $context );
 	return unless ( defined $ids && ref $ids eq 'ARRAY' && scalar @$ids >= 1 );
 
 	# read data from all the ids..
-	return $self->read( $object, $ids );
+	return $self->read( $object, $ids, $context );
 }
 
 sub read_single
@@ -414,7 +426,7 @@ Returns: hash containing all the models fields.
 
 Returns: hash containing the default values for those fields.
 
-=head2 search_detail ( OBJECTNAME, [ [ COLNAME, COMPARATOR, VALUE ] ] )
+=head2 search_detail ( OBJECTNAME, [ [ COLNAME, COMPARATOR, VALUE ] ], CONTEXT )
 
 Used to search and read details on a perticular OBJECT. This uses 'search' to find IDs,
 then calls 'read' to get details on each ID returned.
@@ -424,6 +436,26 @@ Returns: ArrayRef of HashRef's - All the objects found with all their details.
 Example:
 	$results = $erp->search_detail('res.partner', [ [ 'name', 'ilke', 'abc' ] ] );
 	print "This is the 1st found record name:" .  $results->[0]->{name} . "\n";
+
+The C<CONTEXT> argument is optional. This allows a hasref containing the current
+search context to be provided, e.g.
+
+ my $results = $erp->search_detail(
+     'stock.location',
+     [
+	 ['usage' => '=' => 'internal']
+     ],
+     {
+         active_id => $self->id,
+         active_ids => [$self->id],
+         active_model => 'product.product',
+         full => 1,
+         product_id => $self->id,
+         search_default_in_location => 1,
+         section_id => undef,
+         tz => undef,
+     }
+ )
 
 =head2 read_single ( OBJECTNAME, ID )
 
