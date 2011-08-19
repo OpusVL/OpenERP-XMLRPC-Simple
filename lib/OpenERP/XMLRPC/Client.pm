@@ -133,9 +133,9 @@ sub report_report
 {
 	my $self = shift;
 
-	my $method 		= shift;	# eg. 'search'
-	my $relation 	= shift;	# eg. 'res.partner'
-	my @args 		= @_;		# All other args we just pass on.
+	my $report_id 	= shift;	# eg. 'purchase.quotation'
+    my $object_id = shift;
+	my $parameters 	= shift;	# eg.  FIXME
 
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_object_execute_uri );
@@ -146,10 +146,20 @@ sub report_report
 		$self->dbname,
 		$self->openerp_uid,
 		$self->password,
-		$relation,
-		$method,
-		@args
+		$report_id,
+        $object_id,
+        $parameters,
 	);
+    # $self->openerp_rpc->simple_request
+	# (
+	# 	'report',
+	# 	$self->dbname,
+	# 	$self->openerp_uid,
+	# 	$self->password,
+	# 	$relation,
+	# 	$method,
+	# 	@args
+	# );
 
 }
 
@@ -158,6 +168,7 @@ sub report_report_get
 	my $self = shift;
 
 	my $report_id	= shift;	# eg. 123
+    my $parameters = shift;
 
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_object_execute_uri );
@@ -168,7 +179,9 @@ sub report_report_get
 		$self->dbname,
 		$self->openerp_uid,
 		$self->password,
-		$report_id
+		$report_id,
+        [1],
+        $parameters,
 	);
 
 }
