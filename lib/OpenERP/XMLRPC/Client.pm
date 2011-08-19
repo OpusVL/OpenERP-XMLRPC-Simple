@@ -4,6 +4,7 @@ package OpenERP::XMLRPC::Client;
 our $VERSION = '0.02';
 
 use Moose;
+use MIME::Base64;
 
 
 has 'username' 	=> ( is  => 'ro', isa => 'Str', default => 'admin');
@@ -134,12 +135,12 @@ sub report_report
 
 	my $report_id 	= shift;	# eg. 'purchase.quotation'
     my $object_id   = shift;
-	my $parameters  = shift;	# eg.  FIXME
+	my $parameters  = shift;	# eg.  model, id and report_type
 
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_report_report_uri );
 
-    $self->openerp_rpc->simple_request
+    return $self->openerp_rpc->simple_request
 	(
 		'report',
 		$self->dbname,
@@ -148,28 +149,7 @@ sub report_report
 		$report_id,
         [$object_id],
         $parameters,
-        { 
-            lang                    => 'en_GB',
-            active_ids              => [ $object_id ], 
-            tz                      => RPC::XML::boolean->new(0),
-            active_model            => $parameters->{model},
-            section_id              => RPC::XML::boolean->new(0),
-            search_default_draft    => 1, 
-            project_id              => RPC::XML::boolean->new(0),
-            active_id               => $object_id, 
-        }
 	);
-
-    # $self->openerp_rpc->simple_request
-	# (
-	# 	'report',
-	# 	$self->dbname,
-	# 	$self->openerp_uid,
-	# 	$self->password,
-	# 	$relation,
-	# 	$method,
-	# 	@args
-	# );
 }
 
 sub report_report_get
@@ -177,21 +157,26 @@ sub report_report_get
 	my $self = shift;
 
 	my $report_id	= shift;	# eg. 123
-    my $parameters  = shift;
 
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_report_report_uri );
 
-    $self->openerp_rpc->simple_request
+    my $object = $self->openerp_rpc->simple_request
 	(
 		'report_get',
 		$self->dbname,
 		$self->openerp_uid,
 		$self->password,
 		$report_id,
-        [1],
-        $parameters,
 	);
+
+    if($object->{state})
+    {
+        my $data = $object->{result};
+        return decode_base64($data);
+    }
+
+    return;
 }
 
 sub create
