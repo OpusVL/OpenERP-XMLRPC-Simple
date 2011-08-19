@@ -137,7 +137,7 @@ sub report_report
 	my $parameters  = shift;	# eg.  FIXME
 
 	# change the uri to base uri we are going to query..
-    $self->change_uri( $self->_object_execute_uri );
+    $self->change_uri( $self->_report_report_uri );
 
     $self->openerp_rpc->simple_request
 	(
@@ -180,7 +180,7 @@ sub report_report_get
     my $parameters  = shift;
 
 	# change the uri to base uri we are going to query..
-    $self->change_uri( $self->_object_execute_uri );
+    $self->change_uri( $self->_report_report_uri );
 
     $self->openerp_rpc->simple_request
 	(
