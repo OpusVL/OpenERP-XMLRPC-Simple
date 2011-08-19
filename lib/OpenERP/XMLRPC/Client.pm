@@ -14,7 +14,6 @@ has 'port' 		=> ( is  => 'ro', isa => 'Int', default => 8069);
 has 'proto'		=> ( is  => 'ro', isa => 'Str', default => 'http');
 
 has '_report_report_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/report' );
-has '_report_report_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/report' );
 has '_object_execute_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/object' );
 has '_object_exec_workflow_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/object' );
 
@@ -134,8 +133,8 @@ sub report_report
 	my $self = shift;
 
 	my $report_id 	= shift;	# eg. 'purchase.quotation'
-    my $object_id = shift;
-	my $parameters 	= shift;	# eg.  FIXME
+    my $object_id   = shift;
+	my $parameters  = shift;	# eg.  FIXME
 
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_object_execute_uri );
@@ -150,14 +149,17 @@ sub report_report
         [$object_id],
         $parameters,
         { 
-            lang => 'en_GB', active_ids => [ $object_id ], 
-            active_model => $parameters->{model}, search_default_draft => 1, 
-            active_id => $object_id, 
-            tz => RPC::XML::boolean->new(0),
-            project_id => RPC::XML::boolean->new(0),
-            section_id => RPC::XML::boolean->new(0),
+            lang                    => 'en_GB',
+            active_ids              => [ $object_id ], 
+            tz                      => RPC::XML::boolean->new(0),
+            active_model            => $parameters->{model},
+            section_id              => RPC::XML::boolean->new(0),
+            search_default_draft    => 1, 
+            project_id              => RPC::XML::boolean->new(0),
+            active_id               => $object_id, 
         }
 	);
+
     # $self->openerp_rpc->simple_request
 	# (
 	# 	'report',
@@ -168,7 +170,6 @@ sub report_report
 	# 	$method,
 	# 	@args
 	# );
-
 }
 
 sub report_report_get
@@ -176,7 +177,7 @@ sub report_report_get
 	my $self = shift;
 
 	my $report_id	= shift;	# eg. 123
-    my $parameters = shift;
+    my $parameters  = shift;
 
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_object_execute_uri );
@@ -191,7 +192,6 @@ sub report_report_get
         [1],
         $parameters,
 	);
-
 }
 
 sub create
