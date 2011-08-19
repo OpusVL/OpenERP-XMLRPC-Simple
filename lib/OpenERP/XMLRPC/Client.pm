@@ -147,8 +147,16 @@ sub report_report
 		$self->openerp_uid,
 		$self->password,
 		$report_id,
-        $object_id,
+        [$object_id],
         $parameters,
+        { 
+            lang => 'en_GB', active_ids => [ $object_id ], 
+            active_model => $parameters->{model}, search_default_draft => 1, 
+            active_id => $object_id, 
+            tz => RPC::XML::boolean->new(0),
+            project_id => RPC::XML::boolean->new(0),
+            section_id => RPC::XML::boolean->new(0),
+        }
 	);
     # $self->openerp_rpc->simple_request
 	# (
