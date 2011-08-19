@@ -138,7 +138,7 @@ sub report_report
 	my @args 		= @_;		# All other args we just pass on.
 
 	# change the uri to base uri we are going to query..
-    $self->change_uri( $self->_object_execute_uri );
+    $self->change_uri( $self->_report_report_uri );
 
     $self->openerp_rpc->simple_request
 	(
@@ -160,7 +160,7 @@ sub report_report_get
 	my $report_id	= shift;	# eg. 123
 
 	# change the uri to base uri we are going to query..
-    $self->change_uri( $self->_object_execute_uri );
+    $self->change_uri( $self->_report_report_uri );
 
     $self->openerp_rpc->simple_request
 	(
