@@ -92,7 +92,7 @@ sub object_execute
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_object_execute_uri );
 
-    $self->openerp_rpc->simple_request
+    $self->simple_request
 	(
 		'execute',
 		$self->dbname,
@@ -116,7 +116,7 @@ sub object_exec_workflow
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_object_exec_workflow_uri );
 
-    $self->openerp_rpc->simple_request
+    $self->simple_request
 	(
 		'exec_workflow',
 		$self->dbname,
@@ -140,7 +140,7 @@ sub report_report
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_report_report_uri );
 
-    return $self->openerp_rpc->simple_request
+    return $self->simple_request
 	(
 		'report',
 		$self->dbname,
@@ -161,7 +161,7 @@ sub report_report_get
 	# change the uri to base uri we are going to query..
     $self->change_uri( $self->_report_report_uri );
 
-    my $object = $self->openerp_rpc->simple_request
+    my $object = $self->simple_request
 	(
 		'report_get',
 		$self->dbname,
@@ -177,6 +177,23 @@ sub report_report_get
     }
 
     return;
+}
+
+sub simple_request
+{
+    my $self = shift;
+
+    local *RPC::XML::boolean::value = sub {
+        my $self = shift;
+        # this fudges the false so it's not 0
+        # which means if it was used to indicate null is probably going to work better.
+        # the downside is that we presumably lose some precision when it comes to bools
+        # and nulls.
+        return undef unless ${$self};
+        return 1;
+    };
+
+    return $self->openerp_rpc->simple_request(@_);
 }
 
 sub create
