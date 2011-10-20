@@ -3,6 +3,7 @@ package OpenERP::XMLRPC::Client;
 
 our $VERSION = '0.02';
 
+use 5.010;
 use Moose;
 use MIME::Base64;
 
@@ -216,10 +217,10 @@ sub read
 
 sub search
 {
-    my ($self, $object, $args, $context) = @_;
+    my ($self, $object, $args, $context, $offset, $limit) = @_;
     
     if ($context) {
-	return $self->object_execute('search', $object, $args, 0, undef, undef, $context);
+	return $self->object_execute('search', $object, $args, $offset // 0, $limit, undef, $context);
     } else {
 	return $self->object_execute('search', $object, $args);
     }
@@ -275,10 +276,10 @@ sub _array_execute
 
 sub search_detail
 {
-	my ($self, $object, $args, $context) = @_;
+	my ($self, $object, $args, $context, $offset, $limit) = @_;
 
 	# search and get ids..
-	my $ids = $self->search( $object, $args, $context );
+	my $ids = $self->search( $object, $args, $context, $offset, $limit );
 	return unless ( defined $ids && ref $ids eq 'ARRAY' && scalar @$ids >= 1 );
 
 	# read data from all the ids..
