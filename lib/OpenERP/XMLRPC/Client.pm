@@ -17,6 +17,7 @@ has 'proto'		=> ( is  => 'ro', isa => 'Str', default => 'http');
 
 has '_report_report_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/report' );
 has '_object_execute_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/object' );
+has '_object_execute_kw_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/object' );
 has '_object_exec_workflow_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/object' );
 
 has 'openerp_uid' 	=> ( is  => 'rw', isa => 'Int' );
@@ -102,6 +103,30 @@ sub object_execute
 		$relation,
 		$method,
 		@args
+	);
+
+}
+
+sub object_execute_kw
+{
+	my $self = shift;
+
+	my $method 		= shift;	# eg. 'search'
+	my $relation 	= shift;	# eg. 'res.partner'
+	my @args 		= @_;		# All other args we just pass on.
+
+	# change the uri to base uri we are going to query..
+    $self->change_uri( $self->_object_execute_kw_uri );
+
+    $self->simple_request
+	(
+		'execute_kw',
+		$self->dbname,
+		$self->openerp_uid,
+		$self->password,
+		$relation,
+		$method,
+		@args,
 	);
 
 }
