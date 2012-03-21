@@ -229,12 +229,12 @@ sub create
 
 sub read
 {
-    my ($self, $object, $ids, $context) = @_;
+    my ($self, $object, $ids, $context, $fields) = @_;
     
     $ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
     
     if ($context) {
-	return $self->object_execute('read', $object, $ids, undef, $context);
+	return $self->object_execute('read', $object, $ids, $fields, $context);
     } else {
 	return $self->object_execute('read', $object, $ids);
     }
@@ -308,6 +308,7 @@ sub search_detail
 	return unless ( defined $ids && ref $ids eq 'ARRAY' && scalar @$ids >= 1 );
 
 	# read data from all the ids..
+    # FIXME: I'm fairly sure context is in the wrong place.
 	return $self->read( $object, $ids, $context );
 }
 
