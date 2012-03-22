@@ -52,6 +52,11 @@ sub openerp_login
 
 	# set the uid we have just had returned from logging in..
 	$self->openerp_uid( ${ $res } );
+    # NOTE: OpenERP seems to be filling in faultCode not faultString these days
+    # (6.1.1) so we need to check for that and display it instead.
+    $self->openerp_rpc->fault_handler(sub { 
+        confess $_[0]->{faultCode} ? $_[0]->{faultCode}->value : $_[0]->string
+    });
 }
 
 sub openerp_logout
