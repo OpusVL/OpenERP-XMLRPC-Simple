@@ -2,3 +2,7 @@ Makefile
 pm_to_blib
 tags
 blib
+
+OpenERP-XMLRPC-Simple-*.tar.gz
+MYMETA.yml
+MANIFEST.bak
