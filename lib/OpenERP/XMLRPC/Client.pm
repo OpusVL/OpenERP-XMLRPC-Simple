@@ -70,6 +70,7 @@ sub openerp_logout
 sub BUILD
 {
 	my $self = shift;
+    $RPC::XML::ENCODING = 'utf-8';
 	$self->openerp_login;
 }
 
