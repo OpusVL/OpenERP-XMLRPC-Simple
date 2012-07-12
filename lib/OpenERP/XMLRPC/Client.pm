@@ -288,7 +288,7 @@ sub _three_arg_execute
     my $verb    = shift;
 	my $object 	= shift;
 	my $args 	= shift;
-	return $self->object_execute($verb, $object, $args );
+	return $self->object_execute($verb, $object, $args, @_ );
 }
 
 sub _array_execute
