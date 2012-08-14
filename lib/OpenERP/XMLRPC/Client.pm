@@ -1,7 +1,7 @@
 package OpenERP::XMLRPC::Client;
 # ABSTRACT: XMLRPC Client tweaked for OpenERP interaction.
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 use 5.010;
 use Moose;
@@ -70,6 +70,7 @@ sub openerp_logout
 sub BUILD
 {
 	my $self = shift;
+    $RPC::XML::ENCODING = 'utf-8';
 	$self->openerp_login;
 }
 
@@ -287,7 +288,7 @@ sub _three_arg_execute
     my $verb    = shift;
 	my $object 	= shift;
 	my $args 	= shift;
-	return $self->object_execute($verb, $object, $args );
+	return $self->object_execute($verb, $object, $args, @_ );
 }
 
 sub _array_execute
