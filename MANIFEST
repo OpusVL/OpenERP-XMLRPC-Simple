@@ -4,7 +4,9 @@ lib/OpenERP/XMLRPC/Simple.pm
 LICENSE
 Makefile.PL
 MANIFEST			This list of files
+MANIFEST.SKIP
 META.yml
+MYMETA.yml
 README
 t/00-load.t
 t/01-xmlrpc-client.t
