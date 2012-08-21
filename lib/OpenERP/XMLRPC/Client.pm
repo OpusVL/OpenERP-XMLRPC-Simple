@@ -535,7 +535,7 @@ Jon Allen (JJ) <jj@opusvl.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2010 OpusVL
+Copyright (C) 2010-2012 OpusVL
 
 This library is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
