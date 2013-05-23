@@ -43,7 +43,7 @@ sub openerp_login
 	my $self = shift;
 
 	# call 'login' method to get the uid..
-	my $res = $self->openerp_rpc->send_request('login', $self->dbname, $self->username, $self->password );
+	my $res = $self->openerp_rpc->send_request('login', $self->dbname, $self->username, \$self->password );
 
 	if ( ! defined $res || ! ref $res )
 	{
@@ -105,7 +105,7 @@ sub object_execute
 		'execute',
 		$self->dbname,
 		$self->openerp_uid,
-		$self->password,
+		\$self->password,
 		$relation,
 		$method,
 		@args
@@ -129,7 +129,7 @@ sub object_execute_kw
 		'execute_kw',
 		$self->dbname,
 		$self->openerp_uid,
-		$self->password,
+		\$self->password,
 		$relation,
 		$method,
 		@args,
@@ -153,7 +153,7 @@ sub object_exec_workflow
 		'exec_workflow',
 		$self->dbname,
 		$self->openerp_uid,
-		$self->password,
+		\$self->password,
 		$relation,
 		$method,
 		@args
@@ -177,7 +177,7 @@ sub report_report
 		'report',
 		$self->dbname,
 		$self->openerp_uid,
-		$self->password,
+		\$self->password,
 		$report_id,
         [$object_id],
         $parameters,
@@ -198,7 +198,7 @@ sub report_report_get
 		'report_get',
 		$self->dbname,
 		$self->openerp_uid,
-		$self->password,
+		\$self->password,
 		$report_id,
 	);
 
