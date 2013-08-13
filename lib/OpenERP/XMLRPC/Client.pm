@@ -181,6 +181,7 @@ sub report_report
 		$report_id,
         [$object_id],
         $parameters,
+        @_
 	);
 }
 
