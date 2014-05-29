@@ -249,10 +249,10 @@ sub read
 
 sub search
 {
-    my ($self, $object, $args, $context, $offset, $limit) = @_;
+    my ($self, $object, $args, $context, $offset, $limit, $order) = @_;
     
     if ($context) {
-	return $self->object_execute('search', $object, $args, $offset // 0, $limit, undef, $context);
+	return $self->object_execute('search', $object, $args, $offset // 0, $limit, $order, $context);
     } else {
 	return $self->object_execute('search', $object, $args);
     }
