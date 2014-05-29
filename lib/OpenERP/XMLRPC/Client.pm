@@ -1,7 +1,7 @@
 package OpenERP::XMLRPC::Client;
 # ABSTRACT: XMLRPC Client tweaked for OpenERP interaction.
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 use 5.010;
 use Moose;
