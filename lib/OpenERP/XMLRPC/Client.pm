@@ -40,23 +40,25 @@ sub _build_openerp_uri
 
 sub openerp_login
 {
-	my $self = shift;
+    my $self = shift;
 
-	# call 'login' method to get the uid..
-	my $res = $self->openerp_rpc->send_request('login', $self->dbname, $self->username, \$self->password );
+    # call 'login' method to get the uid..
+    my $res = $self->openerp_rpc->send_request('login', $self->dbname, $self->username, \$self->password );
 
-	if ( ! defined $res || ! ref $res )
-	{
-		die "Failed to log into OpenERP XML RPC service";
-	}
+    if ( ! defined $res || ! ref $res )
+    {
+        die "Failed to log into OpenERP XML RPC service";
+    }
+    die "Incorrect username or password" if $$res == 0;
 
-	# set the uid we have just had returned from logging in..
-	$self->openerp_uid( ${ $res } );
+
+    # set the uid we have just had returned from logging in..
+    $self->openerp_uid( ${ $res } );
     # NOTE: OpenERP seems to be filling in faultCode not faultString these days
     # (6.1.1) so we need to check for that and display it instead.
     $self->openerp_rpc->fault_handler(sub { 
-        confess $_[0]->{faultCode} ? $_[0]->{faultCode}->value : $_[0]->string
-    });
+            confess $_[0]->{faultCode} ? $_[0]->{faultCode}->value : $_[0]->string
+        });
 }
 
 sub openerp_logout
