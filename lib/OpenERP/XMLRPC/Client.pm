@@ -6,6 +6,7 @@ our $VERSION = '0.19';
 use 5.010;
 use Moose;
 use MIME::Base64;
+use failures qw/openerp::fault/;
 
 
 has 'username' 	=> ( is  => 'ro', isa => 'Str', default => 'admin');
@@ -14,6 +15,7 @@ has 'dbname' 	=> ( is  => 'ro', isa => 'Str', default => 'terp');
 has 'host' 		=> ( is  => 'ro', isa => 'Str', default => '127.0.0.1');
 has 'port' 		=> ( is  => 'ro', isa => 'Int', default => 8069);
 has 'proto'		=> ( is  => 'ro', isa => 'Str', default => 'http');
+has use_failures => (is => 'ro', isa => 'Bool', default => 0);
 
 has '_report_report_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/report' );
 has '_object_execute_uri'	=> ( is => 'ro', isa => 'Str', default => 'xmlrpc/object' );
@@ -56,9 +58,21 @@ sub openerp_login
     $self->openerp_uid( ${ $res } );
     # NOTE: OpenERP seems to be filling in faultCode not faultString these days
     # (6.1.1) so we need to check for that and display it instead.
-    $self->openerp_rpc->fault_handler(sub { 
-            confess $_[0]->{faultCode} ? $_[0]->{faultCode}->value : $_[0]->string
+    if($self->use_failures)
+    {
+        $self->openerp_rpc->fault_handler(sub { 
+            failure::openerp::fault->throw({
+                    msg => $_[0]->{faultCode} ? $_[0]->{faultCode}->value : $_[0]->string, 
+                    payload => { original_exception => $_[0]}
+                });
         });
+    }
+    else
+    {
+        $self->openerp_rpc->fault_handler(sub { 
+                confess $_[0]->{faultCode} ? $_[0]->{faultCode}->value : $_[0]->string
+            });
+    }
 }
 
 sub openerp_logout

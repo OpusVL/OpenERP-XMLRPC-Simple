@@ -25,7 +25,8 @@ my %WriteMakefileArgs = (
     'Moose' => '1.15',
     'MooseX::Role::XMLRPC::Client' => '0.04',
     'Net::HTTPServer' => '1.1.1',
-    'XML::Simple' => '2.18'
+    'XML::Simple' => '2.18',
+    'failures' => 0,
   },
   'VERSION_FROM' => 'lib/OpenERP/XMLRPC/Client.pm',
   'test' => {
