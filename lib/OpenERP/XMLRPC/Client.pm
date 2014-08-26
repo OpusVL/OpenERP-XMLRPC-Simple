@@ -299,6 +299,11 @@ sub delete
     return shift->_array_execute('unlink', @_);
 }
 
+sub copy
+{
+    return shift->_array_execute('copy', @_);
+}
+
 sub _three_arg_execute
 {
 	my $self 	= shift;
@@ -465,6 +470,10 @@ Returns: ArrayRef of ID's - All the objects ID's matching the search.
 Example:
 	$results = $erp->search('res.partner', [ [ 'name', 'ilke', 'abc' ] ] );
 	print "This is the 1st ID found:" .  $results->[0] . "\n";
+
+=head2 copy ( model, id )
+
+Copies the object specified, returning the id of the new object.
 
 =head2 create ( OBJECTNAME, { COLNAME => COLVALUE } )
 
