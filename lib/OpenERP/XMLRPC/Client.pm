@@ -301,7 +301,7 @@ sub delete
 
 sub copy
 {
-    return shift->_array_execute('copy', @_);
+    return shift->_three_arg_execute('copy', @_);
 }
 
 sub _three_arg_execute
