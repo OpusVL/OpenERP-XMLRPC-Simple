@@ -553,18 +553,5 @@ Returns: HashRef 	- The objects data
 
 L<RPC::XML::Client>
 
-=head1 AUTHOR
-
-Benjamin Martin <ben@madeofpaper.co.uk>
-Colin Newell <colin@opusvl.com>
-Jon Allen (JJ) <jj@opusvl.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2010-2012 OpusVL
-
-This library is free software; you can redistribute it and/or modify it under
-the same terms as Perl itself.
-
 =cut
 
