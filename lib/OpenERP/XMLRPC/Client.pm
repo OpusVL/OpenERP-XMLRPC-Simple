@@ -324,7 +324,7 @@ sub _array_execute
     # ensure we pass an array of IDs to the RPC..
     $ids = [ $ids ] unless ( ref $ids eq 'ARRAY' );
 
-	return $self->object_execute($verb, $object, $ids, $args );
+	return $self->object_execute($verb, $object, $ids, $args, @_ );
 }
 
 sub search_detail
