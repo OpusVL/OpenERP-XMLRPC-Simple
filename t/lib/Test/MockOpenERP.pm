@@ -21,6 +21,8 @@ use HTTP::Request;
 use File::ShareDir qw/module_dir/;
 use XML::Simple;
 use File::Slurp;
+use File::Temp qw/tempdir/;
+use File::Spec;
 
 # Get the path for the response source files (using the 'auto' name space)..
 our $MOCKSOURCE_DIR = File::ShareDir::module_dir( 'Test::MockOpenERP' ) . '/rpc_responses';
@@ -28,6 +30,7 @@ our $MOCKSOURCE_DIR = File::ShareDir::module_dir( 'Test::MockOpenERP' ) . '/rpc_
 use IO::File;
 
 our $PID  = $$;
+my $pid_file;
 
 END { __PACKAGE__->stop(); }
 
@@ -35,29 +38,31 @@ sub start
 {
     my $self 	= shift;
 
-    my $port	= 5555;
-
     # Ignore CHLD
     local $SIG{CHLD} = 'IGNORE';
 
+    my $tempdir = tempdir;
+    $pid_file = File::Spec->catfile($tempdir, "openerp_httpd.pid" );
+    my $port_file = File::Spec->catfile($tempdir, "openerp_httpd.port" );
     # Fork
     my $pid = fork();
 
     if ( $pid == 0 )
     {
     	# Create pid file
-    	_createPid( "/tmp/openerp_httpd.pid" );
+    	_createPid( $pid_file );
 
     	# Create server
     	eval
     	{
     		# Create http server..
-			my $server = new Net::HTTPServer( port => $port, log => '/dev/null' );
+			my $server = new Net::HTTPServer( log => '/dev/null' );
 
 			$server->RegisterURL("/xmlrpc/object",\&object);
 			$server->RegisterURL("/xmlrpc/common",\&common);
 
 			my $port_no = $server->Start();
+            _createPort( $port_file, $port_no );
 
 			$server->Process();  # Run forever
     	};
@@ -65,7 +70,7 @@ sub start
     	if ($@)
     	{
     		# Remove pid file
-    		unlink "/tmp/openerp_httpd.pid";
+    		unlink $pid_file;
 
     		# die
     		die $@;
@@ -76,8 +81,11 @@ sub start
     }
 
     # Wait up to 5 seconds for server to start;
-    die "Failed to start http server" unless _waitpid( 5, "/tmp/openerp_httpd.pid", $pid );	
+    die "Failed to start http server" unless _waitpid( 5, $pid_file, $pid );	
 
+    # now pull the port number from the file
+    # and return it.
+    return _getPortNo( $port_file );
 }
 
 sub stop
@@ -85,7 +93,7 @@ sub stop
 	# Only cleanup parent process.
 	if ( $PID && $PID == $$ )
 	{
-		if ( my $fh = IO::File->new( "/tmp/openerp_httpd.pid", 'r') )
+		if ( my $fh = IO::File->new( $pid_file, 'r') )
 		{
 			# Get pid.
 			my $pid;
@@ -102,6 +110,15 @@ sub _createPid
 {
     my $fh = IO::File->new( shift, 'w') || die "Couldn't create pid";
     $fh->print("$$");
+    $fh->close(); 
+    return;
+}
+
+sub _createPort 
+{
+    my $fh = IO::File->new( shift, 'w') || die "Couldn't create port file";
+    my $port = shift;
+    $fh->print($port);
     $fh->close(); 
     return;
 }
@@ -126,7 +143,18 @@ sub _waitpid
 	}
 }
 
-
+sub _getPortNo
+{
+    my $filename = shift;
+    my $fh = IO::File->new( $filename, 'r');
+    my $port;
+    if ( $fh )
+    {
+        $port = $fh->getline;
+    }
+    $fh->close;
+    return $port;
+}
 
 
 sub object

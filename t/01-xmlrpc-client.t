@@ -17,10 +17,11 @@ BEGIN {
 #ok ( my $erp = OpenERP::XMLRPC::Client->new( dbname => 'openerp5_test', username => 'admin', password => 'admin', host => '10.42.43.43' ), 'instanciated' );
 
 # start mock server..
-Test::MockOpenERP->start;
+my $port = Test::MockOpenERP->start;
+note "Running mock server on port $port";
 
 # connect to mock server..
-ok ( my $erp = OpenERP::XMLRPC::Client->new( port => 5555 ), 'created' );
+ok ( my $erp = OpenERP::XMLRPC::Client->new( port => $port ), 'created' );
 
 # check the roles..
 ok ( $erp->can('object_execute'), 'has the method "object_execute"' );

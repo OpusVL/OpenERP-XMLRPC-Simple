@@ -56,10 +56,11 @@ else
 	diag("Testing against mock OpenERP server");
 
 	# start mock server..
-	Test::MockOpenERP->start;
+	my $port = Test::MockOpenERP->start;
+    note "Running mock server on port $port";
 
 	# connect to mock server..
-	ok ( $erp = OpenERP::XMLRPC::Client->new( port => 5555 ), 'instanciated' );
+	ok ( $erp = OpenERP::XMLRPC::Client->new( port => $port ), 'instanciated' );
 }
 
 
