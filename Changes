@@ -2,6 +2,12 @@ Revision history for OpenERP-XMLRPC-Simple
 
 {{ $NEXT }}
 
+0.23      2016-09-02 11:56:40+01:00 Europe/London
+
+  * Fix #1: allow modules tests to be run in parallel, multiple times by 
+    removing contention on resources.  Port number is generated and temp
+    files are randomly located.
+
 0.22      2016-09-01 10:34:47+01:00 Europe/London
 
   * Converted distribution to use our own Dist::Zilla author bundle.
