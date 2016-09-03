@@ -6,10 +6,13 @@ use warnings;
 use FindBin;
 use lib $FindBin::Bin . '/lib'; # use the test lib dir..
 use Test::MockOpenERP;
-use Test::More;# tests => 1; # last test to print
-
+use Test::More;
 BEGIN {
-   use_ok('OpenERP::XMLRPC::Client');
+    if($^O eq 'MSWin32') {
+        plan skip_all => 'Mock tests don\'t work on windows.';
+    };
+
+    use_ok('OpenERP::XMLRPC::Client');
 }
 
 # CONNECT

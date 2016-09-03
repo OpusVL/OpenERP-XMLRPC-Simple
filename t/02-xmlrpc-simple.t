@@ -3,7 +3,29 @@
 use strict;
 use warnings;
 
-use Test::More tests => 18;
+use Test::More;
+BEGIN {
+    if($^O eq 'MSWin32') {
+        plan skip_all => 'Mock tests don\'t work on windows.
+#################################################################
+#                                                               #
+# The MockOpenERP tests unfortunately don\'t work on Windows.    #
+#                                                               #
+# To run the tests against a real OpenERP please specify the    #
+# following $ENV variables                                      #
+#                                                               #
+#     OPENERP_SIMPLE_HOST - required!                           #
+#     OPENERP_SIMPLE_PORT - default = 8069                      #
+#     OPENERP_SIMPLE_NAME - default = terp                      #
+#     OPENERP_SIMPLE_USER - default = admin                     #
+#     OPENERP_SIMPLE_PASS - default = admin                     #
+#                                                               #
+#################################################################
+' unless $ENV{OPENERP_SIMPLE_HOST};
+}
+plan tests => 18;
+}
+
 
 use FindBin;
 use lib $FindBin::Bin . '/lib'; # use the test lib dir..
