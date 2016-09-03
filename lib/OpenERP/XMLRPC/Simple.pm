@@ -10,7 +10,7 @@ This is just a dummy module to aid dependency management
 
 =cut
 
-our $VERSION = '0.24';
+our $VERSION = '0.25';
 
 
 1;
