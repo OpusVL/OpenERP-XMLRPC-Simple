@@ -2,6 +2,7 @@ Revision history for OpenERP-XMLRPC-Simple
 
 {{ $NEXT }}
 
+  * Fix issue #2: tests hang on Windows.
   * Really fixed issue #1 this time.
 
 0.23      2016-09-02 11:56:40+01:00 Europe/London
