@@ -56,7 +56,7 @@ sub start
     	eval
     	{
     		# Create http server..
-			my $server = new Net::HTTPServer( log => '/dev/null' );
+			my $server = new Net::HTTPServer( log => '/dev/null', port => 'scan' );
 
 			$server->RegisterURL("/xmlrpc/object",\&object);
 			$server->RegisterURL("/xmlrpc/common",\&common);
