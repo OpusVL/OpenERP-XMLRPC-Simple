@@ -119,9 +119,6 @@ sub object_execute
     $self->simple_request
 	(
 		'execute',
-		$self->dbname,
-		$self->openerp_uid,
-		\$self->password,
 		$relation,
 		$method,
 		@args
@@ -143,9 +140,6 @@ sub object_execute_kw
     $self->simple_request
 	(
 		'execute_kw',
-		$self->dbname,
-		$self->openerp_uid,
-		\$self->password,
 		$relation,
 		$method,
 		@args,
@@ -167,9 +161,6 @@ sub object_exec_workflow
     $self->simple_request
 	(
 		'exec_workflow',
-		$self->dbname,
-		$self->openerp_uid,
-		\$self->password,
 		$relation,
 		$method,
 		@args
@@ -191,9 +182,6 @@ sub report_report
     return $self->simple_request
 	(
 		'report',
-		$self->dbname,
-		$self->openerp_uid,
-		\$self->password,
 		$report_id,
         [$object_id],
         $parameters,
@@ -213,9 +201,6 @@ sub report_report_get
     my $object = $self->simple_request
 	(
 		'report_get',
-		$self->dbname,
-		$self->openerp_uid,
-		\$self->password,
 		$report_id,
 	);
 
@@ -231,6 +216,9 @@ sub report_report_get
 sub simple_request
 {
     my $self = shift;
+
+    # add  db creds to all requests
+    splice @_, 1, 0, $self->dbname, $self->openerp_uid, \$self->password;
 
     local *RPC::XML::boolean::value = sub {
         my $self = shift;
