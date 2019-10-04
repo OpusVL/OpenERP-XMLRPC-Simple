@@ -7,7 +7,6 @@ use 5.010;
 use Moose;
 use MIME::Base64;
 use failures qw/openerp::fault/;
-
 use RPC::XML qw/RPC_STRING/;
 
 
