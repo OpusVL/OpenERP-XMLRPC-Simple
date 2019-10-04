@@ -234,6 +234,10 @@ sub simple_request
 {
     my $self = shift;
 
+    # I haven't forced dbname to be passed as string in here because it's possible other consumers of this class have
+    # used it in other ways where the dbname wasn't necessarily the second argument.  Therefore I've done it in
+    # each of its callers I know about.
+
     local *RPC::XML::boolean::value = sub {
         my $self = shift;
         # this fudges the false so it's not 0
