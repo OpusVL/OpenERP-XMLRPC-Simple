@@ -8,6 +8,8 @@ use Moose;
 use MIME::Base64;
 use failures qw/openerp::fault/;
 
+use RPC::XML qw/RPC_STRING/;
+
 
 has 'username' 	=> ( is  => 'ro', isa => 'Str', default => 'admin');
 has 'password' 	=> ( is  => 'ro', isa => 'Str', default => 'admin');
@@ -45,7 +47,7 @@ sub openerp_login
     my $self = shift;
 
     # call 'login' method to get the uid..
-    my $res = $self->openerp_rpc->send_request('login', $self->dbname, $self->username, \$self->password );
+    my $res = $self->openerp_rpc->send_request('login', RPC_STRING($self->dbname), $self->username, \$self->password );
 
     if ( ! defined $res || ! ref $res )
     {
@@ -119,7 +121,7 @@ sub object_execute
     $self->simple_request
 	(
 		'execute',
-		$self->dbname,
+		RPC_STRING($self->dbname),
 		$self->openerp_uid,
 		\$self->password,
 		$relation,
@@ -143,7 +145,7 @@ sub object_execute_kw
     $self->simple_request
 	(
 		'execute_kw',
-		$self->dbname,
+		RPC_STRING($self->dbname),
 		$self->openerp_uid,
 		\$self->password,
 		$relation,
@@ -167,7 +169,7 @@ sub object_exec_workflow
     $self->simple_request
 	(
 		'exec_workflow',
-		$self->dbname,
+		RPC_STRING($self->dbname),
 		$self->openerp_uid,
 		\$self->password,
 		$relation,
@@ -191,7 +193,7 @@ sub report_report
     return $self->simple_request
 	(
 		'report',
-		$self->dbname,
+		RPC_STRING($self->dbname),
 		$self->openerp_uid,
 		\$self->password,
 		$report_id,
@@ -213,7 +215,7 @@ sub report_report_get
     my $object = $self->simple_request
 	(
 		'report_get',
-		$self->dbname,
+		RPC_STRING($self->dbname),
 		$self->openerp_uid,
 		\$self->password,
 		$report_id,
