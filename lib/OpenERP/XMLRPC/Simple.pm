@@ -1,8 +1,5 @@
 package OpenERP::XMLRPC::Simple;
-
-=head1 NAME
-
-OpenERP::XMLRPC::Simple - XMLRPC Client tweaked for OpenERP interaction.
+# ABSTRACT: XMLRPC Client tweaked for OpenERP interaction.
 
 =head1 NOTHING TO SEE HERE
 
