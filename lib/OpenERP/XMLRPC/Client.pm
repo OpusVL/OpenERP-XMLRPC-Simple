@@ -87,7 +87,8 @@ sub openerp_logout
 sub BUILD
 {
 	my $self = shift;
-    $RPC::XML::ENCODING = 'utf-8';
+	$RPC::XML::ENCODING = 'utf-8';
+	$self->openerp_rpc->timeout(7200);
 	$self->openerp_login;
 }
 
